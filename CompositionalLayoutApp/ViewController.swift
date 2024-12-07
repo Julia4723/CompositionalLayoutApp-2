@@ -19,6 +19,7 @@ class ViewController: UIViewController {
 }
 
 private extension ViewController {
+    
 	func setupView() {
 		collectionView = UICollectionView(frame: .zero, collectionViewLayout: createLayout())
 		collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: reuseIdentifier)
@@ -31,10 +32,51 @@ private extension ViewController {
 
 // MARK: - Settings Layout
 private extension ViewController {
-	func createLayout() -> UICollectionViewLayout {
-		return UICollectionViewLayout()
-	}
-	
+    func createLayout() -> UICollectionViewLayout {
+        let largeItem = createLayoutItem(relativeWidth: 0.7, relativeHeight: 1)
+        let smallItem = createLayoutItem(relativeWidth: 1, relativeHeight: 0.5)
+        
+        let rightGroupSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(0.3),
+            heightDimension: .fractionalHeight(1)
+        )
+        
+        let rightGroup = NSCollectionLayoutGroup.vertical(
+            layoutSize: rightGroupSize,
+            subitems: [smallItem, smallItem]
+        )
+        
+        let mainGroupSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1),
+            heightDimension: .fractionalHeight(0.5)
+        )
+        
+        let mainGroup = NSCollectionLayoutGroup.horizontal(
+            layoutSize: mainGroupSize,
+            subitems: [largeItem, rightGroup]
+        )
+        
+        let section = NSCollectionLayoutSection(group: mainGroup)
+        
+        return UICollectionViewCompositionalLayout(section: section)
+    }
+    
+    func createLayoutItem(relativeWidth: Double, relativeHeight: Double) -> NSCollectionLayoutItem {
+        let itemSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(relativeWidth),
+            heightDimension: .fractionalHeight(relativeHeight)
+        )
+        
+        let item = NSCollectionLayoutItem(layoutSize: itemSize)
+        item.contentInsets = NSDirectionalEdgeInsets(
+            top: 5,
+            leading: 5,
+            bottom: 5,
+            trailing: 5
+        )
+        return item
+    }
+    
 	func configureCollectionView() {
 		collectionView.translatesAutoresizingMaskIntoConstraints = false
 		
@@ -47,6 +89,7 @@ private extension ViewController {
 	}
 }
 
+//MARK: - UICollectionViewDataSource
 extension ViewController: UICollectionViewDataSource {
 	func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
 		10
